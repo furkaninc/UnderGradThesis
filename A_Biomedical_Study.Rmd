@@ -1,0 +1,308 @@
+---
+title: "Biomedical Research Study: An Investigation on Thermal Effects of Mobile Phones"
+author: "Furkan İncedayı"
+date: "February 1, 2019"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+subtitle: Investigation of Mobile Phones on Brain Cortex on the Aspect of Temperature
+  Change
+---
+
+## A Brief Summary about The Study
+
+We investigated the thermal effects caused by mobile phones during phone conservations (i.e temperature change during the conduction) on cortex.
+Please be aware that:
+- The issues regarding SAR Values is beyond the scope.
+- 'Near Field Radiation Pattern' and variaties about 'Electric Fields' is not discussed.
+- Mobile Phone, for this study, is considered to be a whole physical medium with certain properties (e.g insulator effect) rather than a device merely emitting RF signals
+
+### Methodology 
+
+For this research both in-Vivo and in-Vitro models are used. 
+We manufactured a phantom for in-Vitro modeling that can mimic the human tissue (i.e epidermal properties)
+The phantom produced using a specific recipe contains following ingredients:
+
+- 90 grams Gelatine
+- 600 ml Water
+- 30 ml Rubbing Alcohol (for preservance)
+
+During the phone call, following procedure is followed:
+
+- Mobile phone operates @ 900 MHz.
+- Temperature measurement is performed within 5-minutes interval (e.g 5-10-15...)
+- For each model, 20 individual processes are performed.
+- For temperature measurement we used an infra-red thermometer with .5% sensitivity.
+- Each phone call lasts 30 minutes sharp.
+- A dataset is generated with those temperature values (in Celcius unit)
+
+### Details and Acknowledments on Models 
+  Having considered approximate body temperature is around 36.5 Celcius, we expected somewhat close values for the zeroth minute temperature value. Yet, it should also be noted that, 36.5 (or similar values) could be different depending on sex, age, and environmental conditions.
+  Since face region is almost always affected by the outer world, certain low-level drops at the value could be just possible.
+  On the other hand, for in-vitro process, we were able to keep track of the zeroth minute value to keep things under control. Gelatine based phantoms are likely to corrupt at high temperatures due to the nature of the preservative ingredient we used at manufacturing process (i.e alcohol). Therefore, initial temperatures for in-Vitro model were kept quite stable around 15 Celcius.
+
+### Generating the Dataset 
+
+We generated a dataset composed of following columns:
+- Model Type
+- Temperature Values for each 5th minutes (e.g 5-10-15) including a initial value (i.e zeroth minute)
+
+## Data/statistical Analysis with R
+
+R (and Rstudio for IDE) is the language of choice for this project.
+Dataset is provided for reproducibility.
+
+```{r, echo = TRUE, include = TRUE, eval = TRUE}
+
+
+experiment <- data.frame(Model = c("H_1", "H_2", "H_3", "H_4", "H_5", "H_6", "H_7", "H_8", "H_9",
+                 "H_10", "H_11", "H_12", "H_13", "H_14", "H_15", "H_16",
+                 "H_17", "H_18", "H_19", "H_20", "P_1", "P_2", "P_3", "P_4", "P_5",
+                 "P_6", "P_7", "P_8", "P_9", "P_10", "P_11", "P_12", "P_13", "P_14",
+                 "P_15", "P_16", "P_17", "P_18", "P_19", "P_20"),
+              init = c(35.1, 35.6, 35, 35.4, 34.9, 35.2, 35.5, 34.7, 34.8, 34.9, 35,
+                 34.9, 34.6, 35, 35.2, 35.5, 34.7, 34.9, 35.3, 35.2, 15, 15.2,
+                 15.3, 15.2, 15, 15.4, 15.2, 15.3, 15.2, 15.1, 15.2, 15.1, 15,
+                 15, 15.5, 15.2, 15.4, 15.2, 15.3, 15.2),
+              min5 = c(35.3, 35.6, 35.2, 35.5, 35.3, 35.6, 35.8, 34.9, 35, 35, 35,
+                 34.7, 34.5, 35.3, 35.5, 35.5, 35, 35.1, 35.5, 35, 15.2, 15.2,
+                 15.5, 15.6, 15.3, 15.5, 15.5, 15.5, 15.2, 15.4, 15.5, 15.2,
+                 15.4, 15, 15.7, 15.5, 15.5, 15.3, 15.5, 15.8),
+              min10 = c(35.7, 35.9, 35.5, 35.8, 35.8, 35.5, 36, 35, 35.2, 35.4, 35.3,
+                 35, 34.9, 35.7, 35.6, 35.5, 35.5, 35.4, 35.8, 35.4, 15.4,
+                 15.2, 15.5, 15.9, 15.4, 15.8, 15.5, 15.9, 15.4, 15.5, 15.7, 15.6,
+                 15.5, 15.2, 15.9, 15.7, 15.5, 15.3, 15.8, 15.9),
+              min15 = c(36, 36.2, 35.6, 35.7, 36, 35.9, 36.4, 35, 35.3, 35.5, 35.7,
+                 35.3, 35, 36, 35.9, 35.8, 35.8, 35.5, 35.8, 35.5, 15.5, 15.7,
+                 15.8, 16, 15.7, 16, 15.8, 15.9, 15.4, 15.5, 15.7, 15.6, 15.8,
+                 15.6, 16, 16, 15.9, 15.7, 15.9, 16.1),
+              min20 = c(36.2, 36.3, 35.8, 36, 36, 36.1, 36.4, 35.5, 35.7, 35.8, 35.7,
+                 35.5, 35, 36.4, 36, 35.8, 35.5, 35.9, 35.9, 35.8, 15.5, 15.7,
+                 16, 16.4, 16, 16.3, 16, 16, 15.7, 15.7, 15.8, 15.6, 16, 15.7,
+                 16, 16, 16.1, 16, 16, 16.3),
+              min25 = c(36.7, 36.3, 35.7, 36, 36.3, 36.1, 36.7, 35.7, 35.6, 36, 35.9,
+                 35.9, 35.3, 36.5, 36, 36.2, 35.9, 36, 35.8, 35.8, 15.7, 16,
+                 16.4, 16.5, 16.1, 16.4, 16.1, 16.3, 15.7, 16, 16, 15.7, 16, 15.6,
+                 16, 16.3, 16.4, 16.3, 16, 16.4),
+              min30 = c(36.3, 36, 35.5, 36, 36.2, 35.9, 36.8, 35.5, 35.6, 35.7, 36,
+                 35.7, 35, 36.5, 36, 36, 35.9, 36, 35.9, 36, 16.2, 16.5, 16.7,
+                 16.8, 16.5, 16.7, 16.4, 16.5, 15.9, 16.2, 16, 15.9, 16, 15.8,
+                 16.2, 16.1, 16.5, 16.5, 16, 16.5)
+)
+
+```
+
+Load up the required packages
+```{r, echo = FALSE, include = TRUE, eval = TRUE}
+library(tidyverse)
+library(lattice)
+library(ggthemes)
+```
+
+
+At this point, we need to wrangle our data to make it appropriate for the visualisation purposes by
+following the 'tidy data' procedure and pre-processing it.
+```{r, echo = FALSE, include= TRUE, eval = TRUE}
+predictorsXtransform <- names(experiment)[2:8]
+
+experiment %>%
+  gather("Minute", "Temperature", predictorsXtransform)  ->
+  transformed
+
+transformed %>%
+  separate(Model, c("ModelType", "ProcessNo")) ->
+  transformed
+```
+
+Setting up the data types: it is another essential process to make an accurate analysis and to avoid obscure notation for possible future audits.
+```{r, echo = FALSE, include= TRUE, eval = TRUE}
+transformed$ModelType <- gsub("H", "Human", transformed$ModelType)
+transformed$ModelType <- gsub("P", "Phantom", transformed$ModelType)
+transformed$Minute <- gsub("min", "", transformed$Minute)
+transformed$Minute <- gsub("init", "0", transformed$Minute)
+
+transformed %>% 
+  mutate_at(vars(ModelType, ProcessNo), as.factor) %>%
+  mutate_at(vars(Minute), as.numeric) ->
+  transformed
+```
+
+Now, since data is transformed, we explored the recently pre-processed dataset by choosing random samples out of it. Afterwards, we derived a grouped data by aggregation which might be quite useful for communicating the data.
+```{r, echo = FALSE, include= TRUE, eval = TRUE}
+glimpse(transformed)
+
+set.seed(1406)
+sample_n(transformed, size = 20)
+
+transformed %>%
+  group_by(ModelType, Minute) %>%
+  summarise(meanTemp = mean(Temperature),
+            sdTemp = round(sd(Temperature), 2)) ->
+  groupedData
+
+set.seed(101)
+sample_n(groupedData, 4)
+
+```
+
+### Visualisations
+_featuring ggplot2 and lattice packages_ 
+We created insightful visualisations to make interpretations on the findings and possible reasons.
+```{r, echo = FALSE, include= TRUE, eval = TRUE}
+pxy <- xyplot(Temperature ~ Minute | ModelType,
+              data = transformed,
+              type = c("p","g"),
+              col = "gray20",
+              alpha = .7,
+              scales = list(y = "free"),
+              panel = function(x, y, ...){
+                panel.xyplot(x, y, ...)
+                panel.loess(x, y, col = "red",
+                            lwd = 1.5)
+              })
+
+pxy <- update(pxy,
+              xlab = "Time (Minute)",
+              ylab = "Temperature (Celcius)",
+              main = "in-Vivo / in-Vitro Temperature Comparison")
+
+pxy
+```
+
+Similar graphs with a more recent and modern package - ggplot2:
+```{r, echo = FALSE, include = TRUE, eval = TRUE}
+p1 <- ggplot(transformed,
+             aes(x = Minute, y = Temperature,
+                 color = ModelType)) +
+  geom_point(size = 1.2, alpha = .5) +
+  geom_smooth(method = "loess",
+              se = FALSE, color = "navy", size = 1) +
+  
+  facet_wrap(~ ModelType, scales = "free_y") +
+  scale_color_brewer(palette = "Set2") 
+ 
+  
+p1 <- p1 + labs(
+  title = "A Comparison: in Vivo - in Vitro Average Temperature",
+  x = "Time (minute)",
+  y = "Temperature (celcius)",
+  subtitle = "Phone talks conducted @900 MHz Band",
+  caption = "figure")
+
+
+p1 <- p1 + theme_light() +
+  theme(
+  plot.title = element_text(family = "Times", size = 14),
+  plot.subtitle = element_text(family = "Times", size = 10),
+  plot.caption = element_text(family = "Times", size = 7))
+
+p1
+```
+
+A more simplified graph was produced via statistical averages of temperature values
+```{r, echo = FALSE, include = TRUE, eval = TRUE}
+p2 <- ggplot(groupedData,
+             aes(x = Minute,
+                 y = meanTemp,
+                 color = ModelType)) +
+  theme_light() +
+  geom_point(alpha = 1/2) + 
+  geom_smooth(se = FALSE, method = "loess") +
+  facet_wrap(~ ModelType, scales = "free_y") +
+  theme(legend.position = "top")
+
+p2
+```
+
+Here, we can have some interactivity for demonstration considerations.
+```{r, echo = FALSE, include = TRUE, eval = TRUE}
+plotly::ggplotly(p1) 
+```
+
+### in-Vivo Model and Approximate Temperature Change on Cortex
+
+We will get back to the data and filter it to work with in-Vivo values only, due to the fact that main topic is a lot more relevant to human beings. We are going to generate some new variables to make further analysis and derive some informations from them in order to figure out what the temperature change is on the surface of the brain. 
+
+Please note that this type of effect can only be found numerically by performing quite complicated analysis and solving very complex analytical equations! (e.g bioheat transfer equations)
+
+Our study DOES NOT contain that type of process. Instead, we revised well-respected papers addressing this issue and derive a numeric COEFFICIENT to make some estimations. Therefore, the end-results you are about to evaluate are just rough approximations. NOT an end-to-end analysis!
+```{r, echo = FALSE, include = TRUE, eval = TRUE}
+approximatedChange <- transformed %>%
+  filter(ModelType == "Human") %>%
+  group_by(ProcessNo) %>%
+  summarise(maxDegree = max(Temperature),
+            minDegree = min(Temperature)) %>%
+  mutate(maxDelta = maxDegree - minDegree,
+         expHighChange = round((maxDelta * .0857), 3)) %>%
+  arrange(desc(maxDelta))
+  
+set.seed(101)
+sample_n(approximatedChange, 5)
+```
+
+So, which process generated maximum (or minimum) temperature change? 
+```{r, echo = FALSE, include = TRUE, eval = TRUE}
+approximatedChange %>%
+  mutate(hi_lo = case_when(
+    maxDelta == max(maxDelta) ~ "extreme",
+    maxDelta == min(maxDelta) ~ "extreme",
+    TRUE ~ "not"
+  )) -> approximatedChange
+  
+psurface <- ggplot(approximatedChange,
+                   aes(x = ProcessNo, y = maxDelta,
+                       color = hi_lo)) +
+  theme_economist() +
+  geom_col(aes(fill = hi_lo), color = "black") +
+  scale_x_discrete(breaks = 1:20) +
+  scale_y_continuous(breaks = seq(0, 1.8, by = .4)) 
+
+psurface <- psurface +
+  theme(plot.title = element_text(family = "Times", size = 12)) +
+  labs(x = "# Experimental Process",
+       y = "Maximum Change on Epidermis",
+       title = "Which Process Generated Max|Min Temperature Change?",
+       subtitle = "Process Numbers and Maximum Delta T. (Celcius)")
+
+psurface
+```
+
+Finally, despite of the fact that around 3.5 Celcius degree is considered critical by medical experts, studies have shown that hipotalamus, in charge of thermal regulations, is likely to alter the thermal behaviour of body after exceeding a change of 0.2 celcius degree. Let's see if one (or more) of our processes have reached that threshold.
+```{r, echo = FALSE, include = TRUE, eval = TRUE}
+pcortex <- xyplot(expHighChange ~ maxDelta, 
+       data = approximatedChange,
+       grid = TRUE,
+       col= "blue",
+       type = c("p","l"),
+       auto.key = TRUE,
+       lwd = 1.4,
+       ylim = c(0, 0.25),
+       panel = function(x, y, ...){
+         panel.xyplot(x, y, ...)
+         panel.abline(h = .2, lty = 2, lwd = 1.5, col ="red")}
+       )
+
+update(pcortex,
+       xlab = "Max Temperature Diff.",
+       ylab = "Highest Change (Approximation)",
+       main = "Expected Maximum Temperature Change")
+```
+
+### Results and Pre-Cautions to Take
+For in-vitro models, there is nothing shocking especially considering the non-alive nature of the material. We have observed an almost linear rise for the phantom which is quite expected. We also expect that after some point the line is very likely to lose its trend and level-off presumably due to molecular resistance.
+For in-vivo process, on the other hand, a quite interesting trend can be observed. Temperature somewhat aggressively rises around 20-25th minute and then levels-off and starts a smooth declining trend. 
+
+Despite being no observation around the aforementioned threshold of 0.2 Celcius Degree at our final figure, we have seen a potential approach to that point. Therefore, there is no harm in taking simple pre-cautions to avoid possible issues.
+
+- Consider keeping some distance from the phone when you feel it is too tactile.
+- Wear your ear-phones.
+- Do not buy replica phones.
+- Prevent the infants from making long phone-calls without ear-phone since their skull may not be thick enough to form an adequate blockage.
+
+***
+***
+***
+
+
+
